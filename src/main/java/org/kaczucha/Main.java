@@ -1,9 +1,9 @@
 package org.kaczucha;
 
-import org.kaczucha.repository.InMemoryClientRepository;
+import org.kaczucha.repository.ClientRepository;
+import org.kaczucha.repository.HibernateClientRepository;
 import org.kaczucha.service.BankService;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -13,7 +13,7 @@ public class Main {
         new Main().run();
     }
     public void run() {
-        final InMemoryClientRepository repository = new InMemoryClientRepository(new ArrayList<>());
+        final ClientRepository repository = new HibernateClientRepository();
         bankService = new BankService(repository);
 
         try (Scanner scanner = new Scanner(System.in)){
