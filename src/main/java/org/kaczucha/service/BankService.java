@@ -11,27 +11,40 @@ public class BankService {
     public BankService(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
     }
+
     public void save(Client client){
         clientRepository.save(client);
     }
+
     public Client findByEmail(String email){
         return clientRepository.findByEmail(email);
     }
 
-    public void transfer(String fromEmail, String toEmail, double amount) {
+    public void transfer(
+            String fromEmail,
+            String toEmail,
+            double amount
+    ) {
         validateAmount(amount);
-        if (fromEmail.equals(toEmail)) throw new IllegalArgumentException("fromEmail and toEmail cannot be equal!");
-        Client fromClient = findByEmail(fromEmail);
-        Client toClient = findByEmail(toEmail);
+        if (fromEmail.equals(toEmail)) {
+            throw new IllegalArgumentException("fromEmail and toEmail cannot be equal!");
+        }
+        Client fromClient = clientRepository.findByEmail(fromEmail);
+        Client toClient = clientRepository.findByEmail(toEmail);
         if (fromClient.getBalance() - amount >= 0) {
             fromClient.setBalance(fromClient.getBalance() - amount);
             toClient.setBalance(toClient.getBalance() + amount);
-        } else throw new NoSufficientFundsException("Not enough funds!");
+        } else {
+            throw new NoSufficientFundsException("Not enough funds!");
+        }
+        clientRepository.save(fromClient);
+        clientRepository.save(toClient);
     }
 
     public void withdraw(
             final String email,
-            final double amount) {
+            final double amount
+    ) {
         validateAmount(amount);
         if (Objects.isNull(email)) {
             throw new IllegalArgumentException("Email can't be null!");
@@ -43,6 +56,7 @@ public class BankService {
         }
         final double newBalance = client.getBalance() - amount;
         client.setBalance(newBalance);
+        clientRepository.save(client);
     }
 
     private void validateAmount(double amount) {
