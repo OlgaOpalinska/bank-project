@@ -1,14 +1,19 @@
 package org.kaczucha.service;
 
+import org.kaczucha.repository.ClientSpringJpaRepository;
 import org.kaczucha.repository.entity.Client;
-import org.kaczucha.repository.ClientRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
+@Service
 public class BankService {
-    private final ClientRepository clientRepository;
+    private final ClientSpringJpaRepository clientRepository;
 
-    public BankService(ClientRepository clientRepository) {
+    @Autowired
+    public BankService(
+            ClientSpringJpaRepository clientRepository) {
         this.clientRepository = clientRepository;
     }
 
