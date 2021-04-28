@@ -12,8 +12,7 @@ public class BankService {
     private final ClientSpringJpaRepository clientRepository;
 
     @Autowired
-    public BankService(
-            ClientSpringJpaRepository clientRepository) {
+    public BankService (ClientSpringJpaRepository clientRepository) {
         this.clientRepository = clientRepository;
     }
 
