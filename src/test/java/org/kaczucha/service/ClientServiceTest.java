@@ -4,7 +4,7 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.kaczucha.repository.ClientSpringJpaRepository;
+import org.kaczucha.repository.ClientRepository;
 import org.kaczucha.repository.entity.Account;
 import org.kaczucha.repository.entity.Client;
 import static java.util.Collections.*;
@@ -12,11 +12,11 @@ import static org.mockito.Mockito.*;
 
 public class ClientServiceTest {
     private ClientService service;
-    private ClientSpringJpaRepository repository;
+    private ClientRepository repository;
 
     @BeforeEach
     public void setup() {
-        repository = mock(ClientSpringJpaRepository.class);
+        repository = mock(ClientRepository.class);
         ClientMapper mapper = mock(ClientMapper.class);
         service = new ClientService(repository, mapper);
     }

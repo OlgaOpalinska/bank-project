@@ -1,19 +1,27 @@
 package org.kaczucha.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.kaczucha.repository.entity.Account;
+import org.kaczucha.controller.dto.AccountRequest;
+import org.kaczucha.controller.dto.AccountResponse;
+import org.kaczucha.service.AccountService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 public class AccountController {
+    private final AccountService service;
 
-    public ResponseEntity<Account> findById(Long id) {
-        return null;
+    @GetMapping("/api/account")
+    public ResponseEntity<AccountResponse> findById(@RequestParam Long id) {
+        final AccountResponse accountResponse = service.findById(id);
+        return new ResponseEntity<>(accountResponse, HttpStatus.ACCEPTED);
     }
-    public void createAccount (@RequestBody Account account) {
 
+    @PostMapping("/api/account")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createAccount (@RequestBody AccountRequest accountRequest) {
+        service.save(accountRequest);
     }
 }
