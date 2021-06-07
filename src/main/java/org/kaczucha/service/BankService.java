@@ -2,21 +2,21 @@ package org.kaczucha.service;
 
 import org.kaczucha.controller.dto.ClientResponse;
 import org.kaczucha.repository.ClientSpringJpaRepository;
-import org.kaczucha.repository.entity.Account;
 import org.kaczucha.repository.entity.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class BankService {
     private final ClientSpringJpaRepository clientRepository;
+    private final ClientMapper mapper;
 
     @Autowired
-    public BankService (ClientSpringJpaRepository clientRepository) {
+    public BankService(ClientSpringJpaRepository clientRepository, ClientMapper mapper) {
         this.clientRepository = clientRepository;
+        this.mapper = mapper;
     }
 
     public void save(Client client){
@@ -28,15 +28,7 @@ public class BankService {
     }
     public ClientResponse findResponseByEmail(String email) {
         Client client = findByEmail(email);
-        final ClientResponse response = ClientResponse.builder()
-                .id(client.getId())
-                .name(client.getName())
-                .email(client.getEmail())
-                .accounts(client.getAccounts().stream()
-                                .map(Account::getId)
-                                .collect(Collectors.toList()))
-                .build();
-        return response;
+        return mapper.map(client);
     }
 
     public void transfer(
