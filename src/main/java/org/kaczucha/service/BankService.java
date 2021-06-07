@@ -1,5 +1,6 @@
 package org.kaczucha.service;
 
+import org.kaczucha.controller.dto.ClientRequest;
 import org.kaczucha.controller.dto.ClientResponse;
 import org.kaczucha.repository.ClientSpringJpaRepository;
 import org.kaczucha.repository.entity.Client;
@@ -19,7 +20,8 @@ public class BankService {
         this.mapper = mapper;
     }
 
-    public void save(Client client){
+    public void save(ClientRequest clientRequest){
+        Client client = mapper.map(clientRequest);
         clientRepository.save(client);
     }
 

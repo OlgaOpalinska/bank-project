@@ -10,6 +10,8 @@ import java.util.Objects;
 @Table(name="USERS")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Client {
     @Id
     @GeneratedValue

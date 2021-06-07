@@ -1,6 +1,7 @@
 package org.kaczucha.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.kaczucha.controller.dto.ClientRequest;
 import org.kaczucha.controller.dto.ClientResponse;
 import org.kaczucha.repository.entity.Client;
 import org.kaczucha.service.BankService;
@@ -24,7 +25,7 @@ public class BankController {
     
     @PostMapping("/api/user")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createClient(@RequestBody Client client) {
-        service.save(client);
+    public void createClient(@RequestBody ClientRequest clientRequest) {
+        service.save(clientRequest);
     }
 }
