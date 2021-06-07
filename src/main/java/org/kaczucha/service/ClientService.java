@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 @Service
-public class BankService {
+public class ClientService {
     private final ClientSpringJpaRepository clientRepository;
     private final ClientMapper mapper;
 
     @Autowired
-    public BankService(ClientSpringJpaRepository clientRepository, ClientMapper mapper) {
+    public ClientService(ClientSpringJpaRepository clientRepository, ClientMapper mapper) {
         this.clientRepository = clientRepository;
         this.mapper = mapper;
     }

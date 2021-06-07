@@ -3,8 +3,7 @@ package org.kaczucha.controller;
 import lombok.RequiredArgsConstructor;
 import org.kaczucha.controller.dto.ClientRequest;
 import org.kaczucha.controller.dto.ClientResponse;
-import org.kaczucha.repository.entity.Client;
-import org.kaczucha.service.BankService;
+import org.kaczucha.service.ClientService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-public class BankController {
-    private final BankService service;
+public class ClientController {
+    private final ClientService service;
 
     @GetMapping("/api/user")
     public ResponseEntity<ClientResponse> findByEmail(@RequestParam String email) {

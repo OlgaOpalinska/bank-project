@@ -10,15 +10,15 @@ import org.kaczucha.repository.entity.Client;
 import static java.util.Collections.*;
 import static org.mockito.Mockito.*;
 
-public class BankServiceTest {
-    private BankService service;
+public class ClientServiceTest {
+    private ClientService service;
     private ClientSpringJpaRepository repository;
 
     @BeforeEach
     public void setup() {
         repository = mock(ClientSpringJpaRepository.class);
         ClientMapper mapper = mock(ClientMapper.class);
-        service = new BankService(repository, mapper);
+        service = new ClientService(repository, mapper);
     }
 
     @Test

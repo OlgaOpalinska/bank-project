@@ -1,19 +1,7 @@
 package org.kaczucha;
 
-import org.kaczucha.repository.ClientSpringJpaRepository;
-import org.kaczucha.repository.entity.Account;
-import org.kaczucha.repository.entity.Client;
-import org.kaczucha.service.BankService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-
-import java.util.List;
-import java.util.Scanner;
 
 @SpringBootApplication
 public class Main {
