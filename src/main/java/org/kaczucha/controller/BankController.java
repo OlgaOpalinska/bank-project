@@ -1,6 +1,7 @@
 package org.kaczucha.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.kaczucha.controller.dto.ClientResponse;
 import org.kaczucha.repository.entity.Client;
 import org.kaczucha.service.BankService;
 import org.springframework.http.HttpHeaders;
@@ -14,13 +15,13 @@ public class BankController {
     private final BankService service;
 
     @GetMapping("/api/user")
-    public ResponseEntity<Client> findByEmail(@RequestParam String email) {
-        final Client client = service.findByEmail(email);
+    public ResponseEntity<ClientResponse> findByEmail(@RequestParam String email) {
+        final ClientResponse client = service.findResponseByEmail(email);
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("EXAMPLE_HEADER", "DUMMY_VALUE");
         return new ResponseEntity<>(client, httpHeaders, HttpStatus.ACCEPTED);
     }
-
+    
     @PostMapping("/api/user")
     @ResponseStatus(HttpStatus.CREATED)
     public void createClient(@RequestBody Client client) {

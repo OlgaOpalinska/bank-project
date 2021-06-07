@@ -18,5 +18,4 @@ public interface ClientSpringJpaRepository extends JpaRepository<Client, Long> {
 
     Page<Client> findByName(String name, Pageable pageable);
 
-
 }
