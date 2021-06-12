@@ -5,7 +5,10 @@ import org.kaczucha.controller.dto.AccountRequest;
 import org.kaczucha.controller.dto.AccountResponse;
 import org.kaczucha.repository.AccountRepository;
 import org.kaczucha.repository.entity.Account;
+import org.kaczucha.repository.entity.Client;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +57,19 @@ public class AccountService {
         }
         repository.save(fromAccount);
         repository.save(toAccount);
+    }
+    public void withdraw(
+            final long fromAccountId,
+            final double amount
+    ) {
+        validateAmount(amount);
+        final Account account = repository.getOne(fromAccountId);
+        if (amount > account.getBalance()) {
+            throw new NoSufficientFundsException("Amount cannot be greater than balance!");
+        }
+        final double newBalance = account.getBalance() - amount;
+        account.setBalance(newBalance);
+        repository.save(account);
     }
         private void validateAmount(double amount) {
         if (amount <= 0) {

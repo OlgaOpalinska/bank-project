@@ -32,23 +32,4 @@ public class ClientService {
         Client client = findByEmail(email);
         return mapper.map(client);
     }
-
-//    public void withdraw(
-//            final String email,
-//            final double amount
-//    ) {
-//        validateAmount(amount);
-//        if (Objects.isNull(email)) {
-//            throw new IllegalArgumentException("Email can't be null!");
-//        }
-//        final String lowerCaseEmail = email.toLowerCase();
-//        final Client client = clientRepository.findByEmail(lowerCaseEmail);
-//        if (amount > client.getBalance()) {
-//            throw new NoSufficientFundsException("Amount cannot be greater than balance!");
-//        }
-//        final double newBalance = client.getBalance() - amount;
-//        client.setBalance(newBalance);
-//        clientRepository.save(client);
-//    }
-//
 }
