@@ -34,4 +34,30 @@ public class AccountService {
                         .build()
         );
     }
+
+        public void transfer(
+            long fromAccountId,
+            long toAccountId,
+            double amount
+    ) {
+        validateAmount(amount);
+        if (fromAccountId == toAccountId) {
+            throw new IllegalArgumentException("fromEmail and toEmail cannot be equal!");
+        }
+        Account fromAccount = repository.getOne(fromAccountId);
+        Account toAccount = repository.getOne(toAccountId);
+        if (fromAccount.getBalance() - amount >= 0) {
+            fromAccount.setBalance(fromAccount.getBalance() - amount);
+            toAccount.setBalance(toAccount.getBalance() + amount);
+        } else {
+            throw new NoSufficientFundsException("Not enough funds!");
+        }
+        repository.save(fromAccount);
+        repository.save(toAccount);
+    }
+        private void validateAmount(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be positive!");
+        }
+    }
 }
