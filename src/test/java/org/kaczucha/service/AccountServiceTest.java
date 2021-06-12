@@ -1,24 +1,23 @@
 package org.kaczucha.service;
 
-import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.kaczucha.repository.AccountRepository;
 import org.kaczucha.repository.ClientRepository;
 import org.kaczucha.repository.entity.Account;
 import org.kaczucha.repository.entity.Client;
 import static java.util.Collections.*;
 import static org.mockito.Mockito.*;
 
-public class ClientServiceTest {
-    private ClientService service;
-    private ClientRepository repository;
+public class AccountServiceTest {
+    private AccountService service;
+    private AccountRepository repository;
 
     @BeforeEach
     public void setup() {
-        repository = mock(ClientRepository.class);
-        ClientMapper mapper = mock(ClientMapper.class);
-        service = new ClientService(repository, mapper);
+        repository = mock(AccountRepository.class);
+        final AccountMapper mapper = mock(AccountMapper.class);
+        service = new AccountService(repository, mapper);
     }
 
 //    @Test
@@ -56,7 +55,7 @@ public class ClientServiceTest {
 //        verify(repository).save(expectedClientFrom);
 //        verify(repository).save(expectedClientTo);
 //    }
-//
+
 //    @Test
 //    public void transfer_allFunds_fundsTransferred() {
 //        //given

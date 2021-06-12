@@ -5,37 +5,23 @@ import org.kaczucha.controller.dto.AccountRequest;
 import org.kaczucha.controller.dto.AccountResponse;
 import org.kaczucha.repository.AccountRepository;
 import org.kaczucha.repository.entity.Account;
-import org.kaczucha.repository.entity.Client;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository repository;
+    private final AccountMapper mapper;
 
     public AccountResponse findById(final Long id) {
         return repository
                 .findById(id)
-                .map(account ->
-                        AccountResponse.builder()
-                                .balance(account.getBalance())
-                                .currency(account.getCurrency())
-                                .id(account.getId())
-                                .userId(account.getUserId())
-                                .build())
+                .map(mapper::map)
                 .orElseThrow(() -> new IllegalArgumentException("Account with " + id + " not found"));
     }
 
     public void save(final AccountRequest accountRequest) {
-        repository.save(
-                Account.builder()
-                        .balance(accountRequest.getBalance())
-                        .userId(accountRequest.getUserId())
-                        .currency(accountRequest.getCurrency())
-                        .build()
-        );
+        repository.save(mapper.map(accountRequest));
     }
 
         public void transfer(
