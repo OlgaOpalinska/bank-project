@@ -13,4 +13,5 @@ public class AccountResponse {
     private long id;
     private double balance;
     private String currency;
+    private Long userId;
 }

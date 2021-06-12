@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class AccountRequest {
     private double balance;
     private String currency;
+    private Long userId;
 }

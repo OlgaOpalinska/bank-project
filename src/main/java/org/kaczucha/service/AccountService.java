@@ -1,30 +1,37 @@
 package org.kaczucha.service;
 
+import lombok.RequiredArgsConstructor;
 import org.kaczucha.controller.dto.AccountRequest;
 import org.kaczucha.controller.dto.AccountResponse;
 import org.kaczucha.repository.AccountRepository;
 import org.kaczucha.repository.entity.Account;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository repository;
-    private final AccountMapper mapper;
 
-    @Autowired
-    public AccountService(AccountRepository repository, AccountMapper mapper) {
-        this.repository = repository;
-        this.mapper = mapper;
+    public AccountResponse findById(final Long id) {
+        return repository
+                .findById(id)
+                .map(account ->
+                        AccountResponse.builder()
+                                .balance(account.getBalance())
+                                .currency(account.getCurrency())
+                                .id(account.getId())
+                                .userId(account.getUserId())
+                                .build())
+                .orElseThrow(() -> new IllegalArgumentException("Account with " + id + " not found"));
     }
 
-    public AccountResponse findById(Long id) {
-        final Account accountById = repository.findAccountById(id);
-        return mapper.map(accountById);
-    }
-
-    public void save(AccountRequest accountRequest) {
-        final Account account = mapper.map(accountRequest);
-        repository.save(account);
+    public void save(final AccountRequest accountRequest) {
+        repository.save(
+                Account.builder()
+                        .balance(accountRequest.getBalance())
+                        .userId(accountRequest.getUserId())
+                        .currency(accountRequest.getCurrency())
+                        .build()
+        );
     }
 }
