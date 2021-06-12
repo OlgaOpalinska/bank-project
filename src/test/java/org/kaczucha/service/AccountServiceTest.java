@@ -2,10 +2,14 @@ package org.kaczucha.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.kaczucha.controller.dto.AccountResponse;
 import org.kaczucha.repository.AccountRepository;
 import org.kaczucha.repository.ClientRepository;
 import org.kaczucha.repository.entity.Account;
 import org.kaczucha.repository.entity.Client;
+
+import java.util.Optional;
+
 import static java.util.Collections.*;
 import static org.mockito.Mockito.*;
 
@@ -20,41 +24,47 @@ public class AccountServiceTest {
         service = new AccountService(repository, mapper);
     }
 
-//    @Test
-//    public void transfer_allParamsOk_fundsTransferred() {
-//        //given
-//        final String emailFrom = "a@a.pl";
-//        final String emailTo = "b@b.pl";
-//        final Client clientFrom = new Client(
-//                "Alek",
-//                emailFrom,
-//                singletonList(new Account(1000, "PLN")));
-//        final Client clientTo = new Client(
-//                "Bartek",
-//                emailTo,
-//                singletonList(new Account(500, "PLN")));
-//        final double amount = 100;
-//
-//        when(repository.findByEmail(emailFrom))
-//                .thenReturn(clientFrom);
-//        when(repository.findByEmail(emailTo))
-//                .thenReturn(clientTo);
-//
-//        //when
-//        service.transfer(emailFrom, emailTo, amount);
-//        //then
-//        final Client expectedClientFrom = new Client(
-//                "Alek",
-//                emailFrom,
-//                singletonList(new Account(900, "PLN")));
-//        final Client expectedClientTo = new Client(
-//                "Bartek",
-//                emailTo,
-//                singletonList(new Account(600, "PLN")));
-//
-//        verify(repository).save(expectedClientFrom);
-//        verify(repository).save(expectedClientTo);
-//    }
+    @Test
+    public void transfer_allParamsOk_fundsTransferred() {
+        //given
+        final long fromAccountId = 1;
+        final long toAccountId = 2;
+        final Account accountFrom = new Account(
+                fromAccountId,
+                100.0,
+                "PLN",
+                1L);
+        final Account accountTo = new Account(
+                toAccountId,
+                100.0,
+                "PLN",
+                2L);
+        final double amount = 50;
+
+        when(repository.getOne(fromAccountId))
+                .thenReturn(accountFrom);
+        when(repository.getOne(toAccountId))
+                .thenReturn(accountTo);
+
+        //when
+        service.transfer(fromAccountId, toAccountId, amount);
+        //then
+        final Account expectedAccountFrom = new Account(
+                fromAccountId,
+                50.0,
+                "PLN",
+                1L
+        );
+        final Account expectedAccountTo = new Account(
+                toAccountId,
+                150.0,
+                "PLN",
+                2L
+        );
+
+        verify(repository).save(expectedAccountFrom);
+        verify(repository).save(expectedAccountTo);
+    }
 
 //    @Test
 //    public void transfer_allFunds_fundsTransferred() {
