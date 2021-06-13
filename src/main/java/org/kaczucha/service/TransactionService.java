@@ -17,6 +17,7 @@ public class TransactionService {
         accountService.transfer(
                 request.getFromAccountId(),
                 request.getToAccountId(),
+                request.getCurrency(),
                 request.getAmount());
 
         repository.save(

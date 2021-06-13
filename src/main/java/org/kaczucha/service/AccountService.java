@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class AccountService {
     private final AccountRepository repository;
     private final AccountMapper mapper;
+    private final CurrencyService currencyService;
 
     public AccountResponse findById(final Long id) {
         return repository
@@ -27,6 +28,7 @@ public class AccountService {
         public void transfer(
             long fromAccountId,
             long toAccountId,
+            String currency,
             double amount
     ) {
         validateAmount(amount);
@@ -35,9 +37,12 @@ public class AccountService {
         }
         Account fromAccount = repository.getOne(fromAccountId);
         Account toAccount = repository.getOne(toAccountId);
+
+        double convertedAmount = convertAmountIfNeeded(fromAccount, toAccount, currency, amount);
+
         if (fromAccount.getBalance() - amount >= 0) {
             fromAccount.setBalance(fromAccount.getBalance() - amount);
-            toAccount.setBalance(toAccount.getBalance() + amount);
+            toAccount.setBalance(toAccount.getBalance() + convertedAmount);
         } else {
             throw new NoSufficientFundsException("Not enough funds!");
         }
@@ -62,4 +67,9 @@ public class AccountService {
             throw new IllegalArgumentException("Amount must be positive!");
         }
     }
+        private double convertAmountIfNeeded(Account fromAccount, Account toAccount, String currency, double amount) {
+            final double fromAmount = currencyService.calculateExchangeRate(fromAccount.getCurrency(), currency) * amount;
+            final double toAmount = currencyService.calculateExchangeRate(currency, toAccount.getCurrency()) * amount;
+            return 0;
+        }
 }

@@ -29,4 +29,5 @@ public class TransactionEntity {
     private long fromAccountId;
     @Column(name="TO_ACCOUNT_ID")
     private long toAccountId;
+
 }

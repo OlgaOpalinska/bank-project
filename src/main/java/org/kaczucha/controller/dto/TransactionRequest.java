@@ -10,4 +10,5 @@ public class TransactionRequest {
     private String currency;
     private long fromAccountId;
     private long toAccountId;
+
 }
