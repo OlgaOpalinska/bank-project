@@ -1,5 +1,6 @@
 package org.kaczucha.service;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kaczucha.controller.dto.AccountResponse;
@@ -66,87 +67,98 @@ public class AccountServiceTest {
         verify(repository).save(expectedAccountTo);
     }
 
-//    @Test
-//    public void transfer_allFunds_fundsTransferred() {
-//        //given
-//        final String emailFrom = "a@a.pl";
-//        final String emailTo = "b@b.pl";
-//        final Client clientFrom = new Client(
-//                "Alek",
-//                emailFrom,
-//                singletonList(new Account(1000, "PLN")));
-//        final Client clientTo = new Client(
-//                "Bartek",
-//                emailTo,
-//                singletonList(new Account(500, "PLN")));
-//
-//        final double amount = 1000;
-//        when(repository.findByEmail(emailFrom))
-//                .thenReturn(clientFrom);
-//        when(repository.findByEmail(emailTo))
-//                .thenReturn(clientTo);
-//        //when
-//        service.transfer(emailFrom, emailTo, amount);
-//        //then
-//        final Client expectedClientFrom = new Client(
-//                "Alek",
-//                emailFrom,
-//                singletonList(new Account(0, "PLN")));
-//        final Client expectedClientTo = new Client(
-//                "Bartek",
-//                emailTo,
-//                singletonList(new Account(1500, "PLN")));
-//        final SoftAssertions softAssertions = new SoftAssertions();
-//
-//        verify(repository).save(expectedClientFrom);
-//        verify(repository).save(expectedClientTo);
-//    }
-//
-//    @Test
-//    public void transfer_notEnoughFunds_thrownNoSufficientFundsException() {
-//        //given
-//        final String emailFrom = "a@a.pl";
-//        final String emailTo = "b@b.pl";
-//        final Client clientFrom = new Client(
-//                "Alek",
-//                emailFrom,
-//                singletonList(new Account(100, "PLN")));
-//        final Client clientTo = new Client(
-//                "Bartek",
-//                emailTo,
-//                singletonList(new Account(500, "PLN")));
-//        when(repository.findByEmail(emailFrom)).thenReturn(clientFrom);
-//        when(repository.findByEmail(emailTo)).thenReturn(clientTo);
-//        final double amount = 1000;
-//        //when/then
-//        Assertions.assertThrows(
-//                NoSufficientFundsException.class,
-//                () -> service.transfer(emailFrom, emailTo, amount));
-//
-//    }
-//
-//    @Test
-//    public void transfer_negativeAmount_thrownIllegalArgumentException() {
-//        //given
-//        final String emailFrom = "a@a.pl";
-//        final String emailTo = "b@b.pl";
-//        final double amount = -1000;
-//        //when/then
-//        Assertions.assertThrows(
-//                IllegalArgumentException.class,
-//                () -> service.transfer(emailFrom, emailTo, amount));
-//    }
-//
-//    @Test
-//    public void transfer_toSameClient_thrownException() {
-//        //given
-//        final String email = "a@a.pl";
-//        //when/then
-//        Assertions.assertThrows(
-//                IllegalArgumentException.class,
-//                () -> service.transfer(email, email, 10));
-//    }
-//
+    @Test
+    public void transfer_allFunds_fundsTransferred() {
+        //given
+        final long fromAccountId = 1;
+        final long toAccountId = 2;
+        final double fromBalance = 100.0;
+        final Account accountFrom = new Account(
+                fromAccountId,
+                fromBalance,
+                "PLN",
+                1L);
+        final Account accountTo = new Account(
+                toAccountId,
+                100.0,
+                "PLN",
+                2L);
+
+        when(repository.getOne(fromAccountId))
+                .thenReturn(accountFrom);
+        when(repository.getOne(toAccountId))
+                .thenReturn(accountTo);
+        //when
+        service.transfer(fromAccountId, toAccountId, fromBalance);
+        //then
+        final Account expectedAccountFrom = new Account(
+                fromAccountId,
+                0.0,
+                "PLN",
+                1L
+        );
+        final Account expectedAccountTo = new Account(
+                toAccountId,
+                200.0,
+                "PLN",
+                2L
+        );
+
+        verify(repository).save(expectedAccountFrom);
+        verify(repository).save(expectedAccountTo);
+    }
+
+    @Test
+    public void transfer_notEnoughFunds_thrownNoSufficientFundsException() {
+        //given
+        final long fromAccountId = 1;
+        final long toAccountId = 2;
+        final double fromBalance = 100.0;
+        final Account accountFrom = new Account(
+                fromAccountId,
+                fromBalance,
+                "PLN",
+                1L);
+        final Account accountTo = new Account(
+                toAccountId,
+                100.0,
+                "PLN",
+                2L);
+        final double amount = fromBalance + 100.0;
+
+        when(repository.getOne(fromAccountId))
+                .thenReturn(accountFrom);
+        when(repository.getOne(toAccountId))
+                .thenReturn(accountTo);
+        //when/then
+        Assertions.assertThrows(
+                NoSufficientFundsException.class,
+                () -> service.transfer(fromAccountId, toAccountId, amount));
+
+    }
+
+    @Test
+    public void transfer_negativeAmount_thrownIllegalArgumentException() {
+        //given
+        final long fromAccountId = 1;
+        final long toAccountId = 2;
+        final double amount = -100.0;
+        //when/then
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> service.transfer(fromAccountId, toAccountId, amount));
+    }
+
+    @Test
+    public void transfer_toSameAccount_thrownException() {
+        //given
+        final long fromAccountId = 1;
+        //when/then
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> service.transfer(fromAccountId, fromAccountId, 10));
+    }
+
 //    @Test
 //    public void withdraw_correctAmount_balanceChangedCorrectly() {
 //        //given
