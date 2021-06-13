@@ -3,15 +3,8 @@ package org.kaczucha.service;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.kaczucha.controller.dto.AccountResponse;
 import org.kaczucha.repository.AccountRepository;
-import org.kaczucha.repository.ClientRepository;
 import org.kaczucha.repository.entity.Account;
-import org.kaczucha.repository.entity.Client;
-
-import java.util.Optional;
-
-import static java.util.Collections.*;
 import static org.mockito.Mockito.*;
 
 public class AccountServiceTest {
@@ -150,6 +143,18 @@ public class AccountServiceTest {
     }
 
     @Test
+    public void transfer_zeroAmount_thrownIllegalArgumentException() {
+        //given
+        final long fromAccountId = 1;
+        final long toAccountId = 2;
+        final double amount = 0;
+        //when/then
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> service.transfer(fromAccountId, toAccountId, amount));
+    }
+
+    @Test
     public void transfer_toSameAccount_thrownException() {
         //given
         final long fromAccountId = 1;
@@ -159,132 +164,117 @@ public class AccountServiceTest {
                 () -> service.transfer(fromAccountId, fromAccountId, 10));
     }
 
-//    @Test
-//    public void withdraw_correctAmount_balanceChangedCorrectly() {
-//        //given
-//        final String email = "a@a.pl";
-//        final Client client = new Client(
-//                "Alek",
-//                email,
-//                singletonList(new Account(100, "PLN")));
-//        when(repository.findByEmail(email)).thenReturn(client);
-//        //when
-//        service.withdraw(email, 50);
-//        //then
-//        Client expectedClient = new Client(
-//                "Alek",
-//                email,
-//                singletonList(new Account(50, "PLN")));
-//        verify(repository).save(expectedClient);
-//    }
-//
-//    @Test
-//    public void withdraw_correctFloatingPointAmount_balanceChangedCorrectly() {
-//        //given
-//        final String email = "a@a.pl";
-//        final Client client = new Client(
-//                "Alek",
-//                email,
-//                singletonList(new Account(100, "PLN")));
-//        when(repository.findByEmail(email)).thenReturn(client);
-//        //when
-//        service.withdraw(email, 50.5);
-//        //then
-//        Client expectedClient = new Client(
-//                "Alek",
-//                email,
-//                singletonList(new Account(49.5, "PLN")));
-//        verify(repository).save(expectedClient);
-//    }
-//
-//    @Test
-//    public void withdraw_allBalance_balanceSetToZero() {
-//        //given
-//        final String email = "a@a.pl";
-//        final Client client = new Client(
-//                "Alek",
-//                email,
-//                singletonList(new Account(100, "PLN")));
-//        when(repository.findByEmail(email)).thenReturn(client);
-//        //when
-//        service.withdraw(email, 100);
-//        //then
-//        Client expectedClient = new Client(
-//                "Alek",
-//                email,
-//                singletonList(new Account(0, "PLN")));
-//        verify(repository).save(expectedClient);
-//    }
-//
-//    @Test
-//    public void withdraw_negativeAmount_throwsIllegalArgumentException() {
-//        //given
-//        final String email = "a@a.pl";
-//        int amount = -100;
-//        //when
-//        Assertions.assertThrows(
-//                IllegalArgumentException.class,
-//                () -> service.withdraw(email, amount)
-//        );
-//    }
-//
-//    @Test
-//    public void withdraw_zeroAmount_throwsIllegalArgumentException() {
-//        //given
-//        final String email = "a@a.pl";
-//        int amount = 0;
-//        //when
-//        Assertions.assertThrows(
-//                IllegalArgumentException.class,
-//                () -> service.withdraw(email, amount)
-//        );
-//    }
-//
-//    @Test
-//    public void withdraw_amountBiggerThanBalance_throwsNoSufficientFundsException() {
-//        //given
-//        final String email = "a@a.pl";
-//        final Client client = new Client(
-//                "Alek",
-//                email,
-//                singletonList(new Account(100, "PLN")));
-//        when(repository.findByEmail(email)).thenReturn(client);
-//        int amount = 1000;
-//        //when/then
-//        Assertions.assertThrows(
-//                NoSufficientFundsException.class,
-//                () -> service.withdraw(email, amount)
-//        );
-//    }
-//    @Test
-//    public void withdraw_upperCaseEmail_balanceChangedCorrectly() {
-//        //given
-//        final String email = "A@A.PL";
-//        final String lowerEmail = "a@a.pl";
-//        final Client client = new Client(
-//                "Alek",
-//                lowerEmail,
-//                singletonList(new Account(100, "PLN")));
-//        when(repository.findByEmail(lowerEmail)).thenReturn(client);
-//        //when
-//        service.withdraw(email, 50);
-//        //then
-//        final Client expectedClient = new Client(
-//                "Alek",
-//                lowerEmail,
-//                singletonList(new Account(50, "PLN")));
-//        verify(repository).save(expectedClient);
-//    }
-//    @Test
-//    public void withdraw_nullEmail_throwsIllegalArgumentException() {
-//        //given
-//        final String email = null;
-//        int amount = 1000;
-//        //when/then
-//        Assertions.assertThrows(
-//                IllegalArgumentException.class,
-//                () -> service.withdraw(email, amount)
-//        );
-//    }
+    @Test
+    public void withdraw_correctAmount_balanceChangedCorrectly() {
+        //given
+        final long fromAccountId = 1;
+        final Account accountFrom = new Account(
+                fromAccountId,
+                100.0,
+                "PLN",
+                1L);
+        final double amount = 50;
+        when(repository.getOne(fromAccountId))
+                .thenReturn(accountFrom);
+        //when
+        service.withdraw(fromAccountId, amount);
+        //then
+        Account expectedAccountFrom = new Account(
+                fromAccountId,
+                50.0,
+                "PLN",
+                1L);
+        verify(repository).save(expectedAccountFrom);
+    }
+
+    @Test
+    public void withdraw_correctFloatingPointAmount_balanceChangedCorrectly() {
+        //given
+        final long fromAccountId = 1;
+        final Account accountFrom = new Account(
+                fromAccountId,
+                100.0,
+                "PLN",
+                1L);
+        final double amount = 50.5;
+        when(repository.getOne(fromAccountId))
+                .thenReturn(accountFrom);
+        //when
+        service.withdraw(fromAccountId, amount);
+        //then
+        Account expectedAccountFrom = new Account(
+                fromAccountId,
+                49.5,
+                "PLN",
+                1L);
+        verify(repository).save(expectedAccountFrom);
+    }
+
+    @Test
+    public void withdraw_allBalance_balanceSetToZero() {
+        //given
+        final long fromAccountId = 1;
+        final double fromBalance = 100.0;
+        final Account accountFrom = new Account(
+                fromAccountId,
+                fromBalance,
+                "PLN",
+                1L);
+        when(repository.getOne(fromAccountId))
+                .thenReturn(accountFrom);
+        //when
+        service.withdraw(fromAccountId, fromBalance);
+        //then
+        Account expectedAccountFrom = new Account(
+                fromAccountId,
+                0.0,
+                "PLN",
+                1L);
+        verify(repository).save(expectedAccountFrom);
+    }
+
+    @Test
+    public void withdraw_negativeAmount_throwsIllegalArgumentException() {
+        //given
+        final long fromAccountId = 1;
+        final double amount = -100.0;
+        //when/then
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> service.withdraw(fromAccountId, amount)
+        );
+    }
+
+    @Test
+    public void withdraw_zeroAmount_throwsIllegalArgumentException() {
+        //given
+        final long fromAccountId = 1;
+        final double amount = 0;
+        //when/then
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> service.withdraw(fromAccountId, amount)
+        );
+    }
+
+    @Test
+    public void withdraw_amountBiggerThanBalance_throwsNoSufficientFundsException() {
+        //given
+        final long fromAccountId = 1;
+        final double fromBalance = 100.0;
+        final Account accountFrom = new Account(
+                fromAccountId,
+                fromBalance,
+                "PLN",
+                1L);
+        final double amount = fromBalance + 100;
+        when(repository.getOne(fromAccountId))
+                .thenReturn(accountFrom);
+        //when/then
+        Assertions.assertThrows(
+                NoSufficientFundsException.class,
+                () -> service.withdraw(fromAccountId, amount)
+        );
+    }
 }
 
