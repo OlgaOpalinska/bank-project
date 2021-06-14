@@ -62,109 +62,113 @@ public class AccountServiceTest {
         verify(repository).save(expectedAccountTo);
     }
 
-//    @Test
-//    public void transfer_allFunds_fundsTransferred() {
-//        //given
-//        final long fromAccountId = 1;
-//        final long toAccountId = 2;
-//        final double fromBalance = 100.0;
-//        final Account accountFrom = new Account(
-//                fromAccountId,
-//                fromBalance,
-//                "PLN",
-//                1L);
-//        final Account accountTo = new Account(
-//                toAccountId,
-//                100.0,
-//                "PLN",
-//                2L);
-//
-//        when(repository.getOne(fromAccountId))
-//                .thenReturn(accountFrom);
-//        when(repository.getOne(toAccountId))
-//                .thenReturn(accountTo);
-//        //when
-//        service.transfer(fromAccountId, toAccountId, fromBalance);
-//        //then
-//        final Account expectedAccountFrom = new Account(
-//                fromAccountId,
-//                0.0,
-//                "PLN",
-//                1L
-//        );
-//        final Account expectedAccountTo = new Account(
-//                toAccountId,
-//                200.0,
-//                "PLN",
-//                2L
-//        );
-//
-//        verify(repository).save(expectedAccountFrom);
-//        verify(repository).save(expectedAccountTo);
-//    }
-//
-//    @Test
-//    public void transfer_notEnoughFunds_thrownNoSufficientFundsException() {
-//        //given
-//        final long fromAccountId = 1;
-//        final long toAccountId = 2;
-//        final double fromBalance = 100.0;
-//        final Account accountFrom = new Account(
-//                fromAccountId,
-//                fromBalance,
-//                "PLN",
-//                1L);
-//        final Account accountTo = new Account(
-//                toAccountId,
-//                100.0,
-//                "PLN",
-//                2L);
-//        final double amount = fromBalance + 100.0;
-//
-//        when(repository.getOne(fromAccountId))
-//                .thenReturn(accountFrom);
-//        when(repository.getOne(toAccountId))
-//                .thenReturn(accountTo);
-//        //when/then
-//        Assertions.assertThrows(
-//                NoSufficientFundsException.class,
-//                () -> service.transfer(fromAccountId, toAccountId, amount));
-//
-//    }
-//
-//    @Test
-//    public void transfer_negativeAmount_thrownIllegalArgumentException() {
-//        //given
-//        final long fromAccountId = 1;
-//        final long toAccountId = 2;
-//        final double amount = -100.0;
-//        //when/then
-//        Assertions.assertThrows(
-//                IllegalArgumentException.class,
-//                () -> service.transfer(fromAccountId, toAccountId, amount));
-//    }
-//
-//    @Test
-//    public void transfer_zeroAmount_thrownIllegalArgumentException() {
-//        //given
-//        final long fromAccountId = 1;
-//        final long toAccountId = 2;
-//        final double amount = 0;
-//        //when/then
-//        Assertions.assertThrows(
-//                IllegalArgumentException.class,
-//                () -> service.transfer(fromAccountId, toAccountId, amount));
-//    }
-//
-//    @Test
-//    public void transfer_toSameAccount_thrownException() {
-//        //given
-//        final long fromAccountId = 1;
-//        //when/then
-//        Assertions.assertThrows(
-//                IllegalArgumentException.class,
-//                () -> service.transfer(fromAccountId, fromAccountId, 10));
-//    }
+    @Test
+    public void transfer_allFunds_sameCurrency_fundsTransferred() {
+        //given
+        final long fromAccountId = 1;
+        final long toAccountId = 2;
+        final String currency = "PLN";
+        final double fromBalance = 100.0;
+        final Account accountFrom = new Account(
+                fromAccountId,
+                fromBalance,
+                currency,
+                1L);
+        final Account accountTo = new Account(
+                toAccountId,
+                100.0,
+                currency,
+                2L);
+
+        when(repository.getOne(fromAccountId))
+                .thenReturn(accountFrom);
+        when(repository.getOne(toAccountId))
+                .thenReturn(accountTo);
+        //when
+        service.transfer(fromAccountId, toAccountId, currency, fromBalance);
+        //then
+        final Account expectedAccountFrom = new Account(
+                fromAccountId,
+                0.0,
+                currency,
+                1L
+        );
+        final Account expectedAccountTo = new Account(
+                toAccountId,
+                200.0,
+                currency,
+                2L
+        );
+
+        verify(repository).save(expectedAccountFrom);
+        verify(repository).save(expectedAccountTo);
+    }
+
+    @Test
+    public void transfer_notEnoughFunds_thrownNoSufficientFundsException() {
+        //given
+        final long fromAccountId = 1;
+        final long toAccountId = 2;
+        final String currency = "PLN";
+        final double fromBalance = 100.0;
+        final Account accountFrom = new Account(
+                fromAccountId,
+                fromBalance,
+                currency,
+                1L);
+        final Account accountTo = new Account(
+                toAccountId,
+                100.0,
+                currency,
+                2L);
+        final double amount = fromBalance + 100.0;
+
+        when(repository.getOne(fromAccountId))
+                .thenReturn(accountFrom);
+        when(repository.getOne(toAccountId))
+                .thenReturn(accountTo);
+        //when/then
+        Assertions.assertThrows(
+                NoSufficientFundsException.class,
+                () -> service.transfer(fromAccountId, toAccountId, currency, amount));
+
+    }
+
+    @Test
+    public void transfer_negativeAmount_thrownIllegalArgumentException() {
+        //given
+        final long fromAccountId = 1;
+        final long toAccountId = 2;
+        final String currency = "PLN";
+        final double amount = -100.0;
+        //when/then
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> service.transfer(fromAccountId, toAccountId, currency, amount));
+    }
+
+    @Test
+    public void transfer_zeroAmount_thrownIllegalArgumentException() {
+        //given
+        final long fromAccountId = 1;
+        final long toAccountId = 2;
+        final String currency = "PLN";
+        final double amount = 0;
+        //when/then
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> service.transfer(fromAccountId, toAccountId, currency, amount));
+    }
+
+    @Test
+    public void transfer_toSameAccount_thrownException() {
+        //given
+        final long fromAccountId = 1;
+        //when/then
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> service.transfer(fromAccountId, fromAccountId, "PLN", 10));
+    }
 
     @Test
     public void withdraw_correctAmount_balanceChangedCorrectly() {
