@@ -19,48 +19,49 @@ public class AccountServiceTest {
         service = new AccountService(repository, mapper, currencyService);
     }
 
-//    @Test
-//    public void transfer_allParamsOk_fundsTransferred() {
-//        //given
-//        final long fromAccountId = 1;
-//        final long toAccountId = 2;
-//        final Account accountFrom = new Account(
-//                fromAccountId,
-//                100.0,
-//                "PLN",
-//                1L);
-//        final Account accountTo = new Account(
-//                toAccountId,
-//                100.0,
-//                "PLN",
-//                2L);
-//        final double amount = 50;
-//
-//        when(repository.getOne(fromAccountId))
-//                .thenReturn(accountFrom);
-//        when(repository.getOne(toAccountId))
-//                .thenReturn(accountTo);
-//
-//        //when
-//        service.transfer(fromAccountId, toAccountId, amount);
-//        //then
-//        final Account expectedAccountFrom = new Account(
-//                fromAccountId,
-//                50.0,
-//                "PLN",
-//                1L
-//        );
-//        final Account expectedAccountTo = new Account(
-//                toAccountId,
-//                150.0,
-//                "PLN",
-//                2L
-//        );
-//
-//        verify(repository).save(expectedAccountFrom);
-//        verify(repository).save(expectedAccountTo);
-//    }
-//
+    @Test
+    public void transfer_allParamsOk_sameCurrency_fundsTransferred() {
+        //given
+        final long fromAccountId = 1;
+        final long toAccountId = 2;
+        final String currency = "PLN";
+        final Account accountFrom = new Account(
+                fromAccountId,
+                100.0,
+                currency,
+                1L);
+        final Account accountTo = new Account(
+                toAccountId,
+                100.0,
+                currency,
+                2L);
+        final double amount = 50;
+
+        when(repository.getOne(fromAccountId))
+                .thenReturn(accountFrom);
+        when(repository.getOne(toAccountId))
+                .thenReturn(accountTo);
+
+        //when
+        service.transfer(fromAccountId, toAccountId, currency, amount);
+        //then
+        final Account expectedAccountFrom = new Account(
+                fromAccountId,
+                50.0,
+                currency,
+                1L
+        );
+        final Account expectedAccountTo = new Account(
+                toAccountId,
+                150.0,
+                currency,
+                2L
+        );
+
+        verify(repository).save(expectedAccountFrom);
+        verify(repository).save(expectedAccountTo);
+    }
+
 //    @Test
 //    public void transfer_allFunds_fundsTransferred() {
 //        //given

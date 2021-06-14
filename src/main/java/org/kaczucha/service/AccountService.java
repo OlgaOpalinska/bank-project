@@ -44,8 +44,19 @@ public class AccountService {
     }
 
     private void convertCurrenciesAndSetNewBalance(String currency, double amount, Account fromAccount, Account toAccount) {
-        double convertedFromAmount = currencyService.makeSingleConversion(fromAccount.getCurrency(), currency, amount);
-        double convertedToAmount = currencyService.makeSingleConversion(currency, toAccount.getCurrency(), amount);
+
+        final double convertedFromAmount;
+        final double convertedToAmount;
+        if (!fromAccount.getCurrency().equals(currency)) {
+            convertedFromAmount = currencyService.makeSingleConversion(fromAccount.getCurrency(), currency, amount);
+        } else {
+            convertedFromAmount = amount;
+        }
+        if (!currency.equals(toAccount.getCurrency())) {
+            convertedToAmount = currencyService.makeSingleConversion(currency, toAccount.getCurrency(), amount);
+        } else {
+            convertedToAmount = amount;
+        }
 
         if (fromAccount.getBalance() - convertedFromAmount >= 0) {
             fromAccount.setBalance(fromAccount.getBalance() - convertedFromAmount);
