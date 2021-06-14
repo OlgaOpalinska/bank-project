@@ -38,17 +38,23 @@ public class AccountService {
         Account fromAccount = repository.getOne(fromAccountId);
         Account toAccount = repository.getOne(toAccountId);
 
-        double convertedAmount = convertAmountIfNeeded(fromAccount, toAccount, currency, amount);
+            convertCurrenciesAndSetNewBalance(currency, amount, fromAccount, toAccount);
+            repository.save(fromAccount);
+            repository.save(toAccount);
+    }
 
-        if (fromAccount.getBalance() - amount >= 0) {
-            fromAccount.setBalance(fromAccount.getBalance() - amount);
-            toAccount.setBalance(toAccount.getBalance() + convertedAmount);
+    private void convertCurrenciesAndSetNewBalance(String currency, double amount, Account fromAccount, Account toAccount) {
+        double convertedFromAmount = currencyService.makeSingleConversion(fromAccount.getCurrency(), currency, amount);
+        double convertedToAmount = currencyService.makeSingleConversion(currency, toAccount.getCurrency(), amount);
+
+        if (fromAccount.getBalance() - convertedFromAmount >= 0) {
+            fromAccount.setBalance(fromAccount.getBalance() - convertedFromAmount);
+            toAccount.setBalance(toAccount.getBalance() + convertedToAmount);
         } else {
             throw new NoSufficientFundsException("Not enough funds!");
         }
-        repository.save(fromAccount);
-        repository.save(toAccount);
     }
+
     public void withdraw(
             final long fromAccountId,
             final double amount
@@ -67,9 +73,4 @@ public class AccountService {
             throw new IllegalArgumentException("Amount must be positive!");
         }
     }
-        private double convertAmountIfNeeded(Account fromAccount, Account toAccount, String currency, double amount) {
-            final double fromAmount = currencyService.calculateExchangeRate(fromAccount.getCurrency(), currency) * amount;
-            final double toAmount = currencyService.calculateExchangeRate(currency, toAccount.getCurrency()) * amount;
-            return 0;
-        }
 }

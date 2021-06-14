@@ -2,7 +2,6 @@ package org.kaczucha.service;
 
 import lombok.RequiredArgsConstructor;
 import org.kaczucha.controller.dto.CurrencyResponse;
-import org.kaczucha.repository.entity.Account;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -25,6 +24,9 @@ public class CurrencyService {
         final Map<String, Double> rates = getCurrencyRates().getRates();
         final Double fromRate = rates.get(fromCurrency);
         final Double toRate = rates.get(toCurrency);
-        return toRate / fromRate;
+        return (double) Math.round((toRate / fromRate)*100)/100;
+    }
+    public double makeSingleConversion(String fromCurrency, String toCurrency, double amount) {
+        return calculateExchangeRate(fromCurrency, toCurrency) * amount;
     }
 }

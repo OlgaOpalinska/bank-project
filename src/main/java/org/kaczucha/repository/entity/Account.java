@@ -30,4 +30,7 @@ public class Account {
         this.balance = balance;
         this.currency = currency;
     }
+    public void setBalance(double balance) {
+        this.balance = (double) Math.round(balance*100)/100;
+    }
 }
